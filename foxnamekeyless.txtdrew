@@ -1,0 +1,295 @@
+local CorrectKey = "FoxNameAutoTxtLoader - CyprrkakoehGskkenejdnejdnd"
+local KeyLink = "https://link4m.net/9Taf0n"
+local KeyFileName = "FoxNameKeyData.json"
+local ExpirationTime = 24 * 60 * 60 -- 24 hours in seconds
+
+-- Services
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local TweenInfoFast = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+-- Function to execute main script
+local function LoadMainScript()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua"))()
+end
+
+-- Save & Check Key System Function
+local function SaveKey(key)
+    if writefile then
+        local data = {
+            SavedKey = key,
+            Timestamp = os.time()
+        }
+        writefile(KeyFileName, HttpService:JSONEncode(data))
+    end
+end
+
+local function IsKeyValid()
+    if isfile and isfile(KeyFileName) and readfile then
+        local success, result = pcall(function()
+            return HttpService:JSONDecode(readfile(KeyFileName))
+        end)
+        
+        if success and result and result.SavedKey and result.Timestamp then
+            if result.SavedKey == CorrectKey and (os.time() - result.Timestamp) < ExpirationTime then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+-- Auto-Login check
+if IsKeyValid() then
+    LoadMainScript()
+    return
+end
+
+-- Color Palette (Light Cyan / Sky Blue Theme)
+local MainBlue = Color3.fromRGB(115, 205, 255)
+local DarkBg = Color3.fromRGB(16, 22, 30)
+local FrameBg = Color3.fromRGB(24, 32, 44)
+local InputBg = Color3.fromRGB(32, 42, 58)
+
+-- Create Elements
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local UIStroke = Instance.new("UIStroke")
+local ParticleContainer = Instance.new("Frame")
+
+local Title = Instance.new("TextLabel")
+local Subtitle = Instance.new("TextLabel")
+
+local KeyInputFrame = Instance.new("Frame")
+local KeyInputCorner = Instance.new("UICorner")
+local KeyInputStroke = Instance.new("UIStroke")
+local KeyInput = Instance.new("TextBox")
+
+local ButtonContainer = Instance.new("Frame")
+local UIListLayout = Instance.new("UIListLayout")
+
+local GetKeyBtn = Instance.new("TextButton")
+local GetKeyCorner = Instance.new("UICorner")
+local GetKeyStroke = Instance.new("UIStroke")
+
+local SubmitBtn = Instance.new("TextButton")
+local SubmitCorner = Instance.new("UICorner")
+
+local StatusLabel = Instance.new("TextLabel")
+
+-- Setup Parent
+ScreenGui.Parent = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Main Window
+MainFrame.Name = "FoxNameKeySystem"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = DarkBg
+MainFrame.Position = UDim2.new(0.5, -170, 0.5, -125)
+MainFrame.Size = UDim2.new(0, 340, 0, 250)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true
+
+UICorner.CornerRadius = UDim.new(0, 16)
+UICorner.Parent = MainFrame
+
+UIStroke.Parent = MainFrame
+UIStroke.Color = MainBlue
+UIStroke.Thickness = 1.5
+UIStroke.Transparency = 0.3
+
+-- Particle Container
+ParticleContainer.Name = "ParticleContainer"
+ParticleContainer.Parent = MainFrame
+ParticleContainer.BackgroundTransparency = 1
+ParticleContainer.Size = UDim2.new(1, 0, 1, 0)
+ParticleContainer.ZIndex = 0
+
+-- Background Particle System
+local function CreateParticle()
+    local Particle = Instance.new("Frame")
+    local PCorner = Instance.new("UICorner")
+    local size = math.random(2, 5)
+    
+    Particle.Parent = ParticleContainer
+    Particle.BackgroundColor3 = MainBlue
+    Particle.BackgroundTransparency = math.random(4, 7) / 10
+    Particle.Size = UDim2.new(0, size, 0, size)
+    Particle.Position = UDim2.new(math.random(), 0, 1, 10)
+    Particle.ZIndex = 0
+    
+    PCorner.CornerRadius = UDim.new(1, 0)
+    PCorner.Parent = Particle
+
+    local duration = math.random(40, 70) / 10
+    local targetX = Particle.Position.X.Scale + (math.random(-10, 10) / 100)
+    
+    local tween = TweenService:Create(Particle, TweenInfo.new(duration, Enum.EasingStyle.Linear), {
+        Position = UDim2.new(targetX, 0, -0.1, 0),
+        BackgroundTransparency = 1
+    })
+    
+    tween:Play()
+    tween.Completed:Connect(function()
+        Particle:Destroy()
+    end)
+end
+
+task.spawn(function()
+    while ScreenGui.Parent do
+        CreateParticle()
+        task.wait(0.3)
+    end
+end)
+
+-- Header: Fox Name
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 0, 0, 20)
+Title.Size = UDim2.new(1, 0, 0, 26)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "FOX NAME"
+Title.TextColor3 = MainBlue
+Title.TextSize = 20
+
+Subtitle.Parent = MainFrame
+Subtitle.BackgroundTransparency = 1
+Subtitle.Position = UDim2.new(0, 0, 0, 46)
+Subtitle.Size = UDim2.new(1, 0, 0, 16)
+Subtitle.Font = Enum.Font.Gotham
+Subtitle.Text = "Key Verification System"
+Subtitle.TextColor3 = Color3.fromRGB(160, 180, 200)
+Subtitle.TextSize = 11
+
+-- Input Box
+KeyInputFrame.Parent = MainFrame
+KeyInputFrame.BackgroundColor3 = InputBg
+KeyInputFrame.Position = UDim2.new(0.08, 0, 0.32, 0)
+KeyInputFrame.Size = UDim2.new(0.84, 0, 0, 42)
+
+KeyInputCorner.CornerRadius = UDim.new(0, 10)
+KeyInputCorner.Parent = KeyInputFrame
+
+KeyInputStroke.Parent = KeyInputFrame
+KeyInputStroke.Color = Color3.fromRGB(45, 60, 80)
+KeyInputStroke.Thickness = 1
+
+KeyInput.Parent = KeyInputFrame
+KeyInput.BackgroundTransparency = 1
+KeyInput.Position = UDim2.new(0.04, 0, 0, 0)
+KeyInput.Size = UDim2.new(0.92, 0, 1, 0)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.PlaceholderText = "Enter Key Here..."
+KeyInput.PlaceholderColor3 = Color3.fromRGB(110, 130, 150)
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.TextSize = 12
+KeyInput.ClearTextOnFocus = false
+
+KeyInput.Focused:Connect(function()
+    TweenService:Create(KeyInputStroke, TweenInfoFast, {Color = MainBlue}):Play()
+end)
+KeyInput.FocusLost:Connect(function()
+    TweenService:Create(KeyInputStroke, TweenInfoFast, {Color = Color3.fromRGB(45, 60, 80)}):Play()
+end)
+
+-- Button Layout Container
+ButtonContainer.Parent = MainFrame
+ButtonContainer.BackgroundTransparency = 1
+ButtonContainer.Position = UDim2.new(0.08, 0, 0.56, 0)
+ButtonContainer.Size = UDim2.new(0.84, 0, 0, 38)
+
+UIListLayout.Parent = ButtonContainer
+UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 10)
+
+-- Button: Get Key
+GetKeyBtn.Name = "1_GetKey"
+GetKeyBtn.Parent = ButtonContainer
+GetKeyBtn.BackgroundColor3 = FrameBg
+GetKeyBtn.Size = UDim2.new(0.48, -5, 1, 0)
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.Text = "Get Key"
+GetKeyBtn.TextColor3 = MainBlue
+GetKeyBtn.TextSize = 12
+
+GetKeyCorner.CornerRadius = UDim.new(0, 10)
+GetKeyCorner.Parent = GetKeyBtn
+
+GetKeyStroke.Parent = GetKeyBtn
+GetKeyStroke.Color = MainBlue
+GetKeyStroke.Thickness = 1
+
+-- Button: Submit Key
+SubmitBtn.Name = "2_Submit"
+SubmitBtn.Parent = ButtonContainer
+SubmitBtn.BackgroundColor3 = MainBlue
+SubmitBtn.Size = UDim2.new(0.52, -5, 1, 0)
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.Text = "Verify Key"
+SubmitBtn.TextColor3 = DarkBg
+SubmitBtn.TextSize = 12
+
+SubmitCorner.CornerRadius = UDim.new(0, 10)
+SubmitCorner.Parent = SubmitBtn
+
+-- Status Label
+StatusLabel.Parent = MainFrame
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Position = UDim2.new(0.08, 0, 0.78, 0)
+StatusLabel.Size = UDim2.new(0.84, 0, 0, 25)
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.Text = ""
+StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+StatusLabel.TextSize = 11
+
+-- Smooth Shake Effect
+local function SmoothShakeUI()
+    local origPos = MainFrame.Position
+    local shakeInfo = TweenInfo.new(0.04, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    local offsets = {6, -6, 4, -4, 2, -2, 0}
+    
+    for _, offset in ipairs(offsets) do
+        local tween = TweenService:Create(MainFrame, shakeInfo, {
+            Position = origPos + UDim2.new(0, offset, 0, 0)
+        })
+        tween:Play()
+        tween.Completed:Wait()
+    end
+end
+
+-- Events
+GetKeyBtn.MouseButton1Click:Connect(function()
+    setclipboard(KeyLink)
+    StatusLabel.TextColor3 = MainBlue
+    StatusLabel.Text = "✔ Key link copied to clipboard!"
+    task.wait(2)
+    if StatusLabel.Text == "✔ Key link copied to clipboard!" then
+        StatusLabel.Text = ""
+    end
+end)
+
+SubmitBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == CorrectKey then
+        SaveKey(KeyInput.Text)
+        StatusLabel.TextColor3 = Color3.fromRGB(120, 255, 180)
+        StatusLabel.Text = "✔ Correct Key! Loading Fox Name..."
+        TweenService:Create(UIStroke, TweenInfoFast, {Color = Color3.fromRGB(120, 255, 180)}):Play()
+        task.wait(1.2)
+        ScreenGui:Destroy()
+        
+        LoadMainScript()
+    else
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        StatusLabel.Text = "✖ Invalid Key! Please try again."
+        TweenService:Create(KeyInputStroke, TweenInfoFast, {Color = Color3.fromRGB(255, 100, 100)}):Play()
+        SmoothShakeUI()
+        KeyInput.Text = ""
+        task.wait(1.5)
+        TweenService:Create(KeyInputStroke, TweenInfoFast, {Color = Color3.fromRGB(45, 60, 80)}):Play()
+    end
+end)
